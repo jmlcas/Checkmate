@@ -7,13 +7,13 @@ services:
     ports:
       - "52345:52345"
     environment:
-      - CLIENT_HOST=http://IP-HOST-DOCKER:52345
-      - UPTIME_APP_CLIENT_HOST=http://IP-HOST-DOCKER:52345
-      - UPTIME_APP_API_BASE_URL=http://IP-HOST-DOCKER:52345/api/v1
-      - UPTIME_ALLOWED_ORIGINS=http://IP-HOST-DOCKER:52345
-      - UPTIME_APP_PUBLIC_ASSETS_URL=http://IP-HOST-DOCKER:52345/uploads
+      - CLIENT_HOST=http://localhost:52345
+      - UPTIME_APP_CLIENT_HOST=http://localhost:52345
+      - UPTIME_APP_API_BASE_URL=http://localhost:52345/api/v1
+      - UPTIME_ALLOWED_ORIGINS=http://localhost:52345
+      - UPTIME_APP_PUBLIC_ASSETS_URL=http://localhost:52345/uploads
       - UPTIME_APP_UPLOAD_DIR=/app/uploads
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=my_secret
       - DB_CONNECTION_STRING=mongodb://mongodb:27017/checkmate
     volumes:
       - ./uploads:/app/uploads
@@ -22,9 +22,10 @@ services:
       - mongodb
 
   mongodb:
-    image: mongo:6
+    image: ghcr.io/bluewave-labs/checkmate-mongo:latest
     container_name: checkmate-mongo
     restart: unless-stopped
-    command: ["mongod", "--quiet"]
+    command: ["mongod", "--quiet", "--bind_ip_all"]
     volumes:
-      - ./mongo:/data/db
+      - ./mongo/data:/data/db
+
