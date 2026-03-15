@@ -1,0 +1,30 @@
+services:
+
+  checkmate:
+    image: ghcr.io/bluewave-labs/checkmate-backend-mono:latest
+    container_name: checkmate
+    restart: unless-stopped
+    ports:
+      - "52345:52345"
+    environment:
+      - CLIENT_HOST=http://IP-HOST-DOCKER:52345
+      - UPTIME_APP_CLIENT_HOST=http://IP-HOST-DOCKER:52345
+      - UPTIME_APP_API_BASE_URL=http://IP-HOST-DOCKER:52345/api/v1
+      - UPTIME_ALLOWED_ORIGINS=http://IP-HOST-DOCKER:52345
+      - UPTIME_APP_PUBLIC_ASSETS_URL=http://IP-HOST-DOCKER:52345/uploads
+      - UPTIME_APP_UPLOAD_DIR=/app/uploads
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_CONNECTION_STRING=mongodb://mongodb:27017/checkmate
+    volumes:
+      - ./uploads:/app/uploads
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:6
+    container_name: checkmate-mongo
+    restart: unless-stopped
+    command: ["mongod", "--quiet"]
+    volumes:
+      - ./mongo:/data/db
